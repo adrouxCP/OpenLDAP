@@ -3,7 +3,8 @@ services:
   openldap:
     image: osixia/openldap:latest
     container_name: openldap
-    command: --loglevel debug
+    restart: always
+    #command: --loglevel debug
     environment:
       LDAP_LOG_LEVEL: "256"
       LDAP_ORGANISATION: "Example Inc."
@@ -41,16 +42,27 @@ services:
     ports:
       - "389:389"
       - "636:636"
-    domainname: "example.org" # important: same as hostname
+    networks:
+        net_wso2:
+            ipv4_address: 192.168.1.10
+    domainname: "example.org"
     hostname: "example.org"
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
     container_name: phpldapadmin
+    restart: always
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "false"
     ports:
       - "8080:80"
+    networks:
+       net_wso2:
+           ipv4_address: 192.168.1.20
     depends_on:
       - openldap
+networks:
+   net_wso2:
+     external: true
+       
